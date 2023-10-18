@@ -6,29 +6,48 @@ import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	url1 "net/url"
+	"strconv"
 	"strings"
 )
 
-func validateProduct(product domain.Product) error {
+func ValidateProduct(product domain.Product) error {
 	validate := validator.New()
-	if err := validate.Struct(product); err != nil {
+	var err error
+	if err = validate.Struct(product); err != nil {
 		return err
 	}
-	if err := validateBlankValuesProduct(product); err != nil {
+	if err = validateSku(product.Sku); err != nil {
 		return err
 	}
-	if err := validateImagesUrls(product); err != nil {
+	if err = validateBlankValuesProduct(product); err != nil {
 		return err
 	}
+	if err = validateImagesUrls(product); err != nil {
+		return err
+	}
+	return nil
 }
 
 func validateBlank(value string) bool {
-	return len(strings.TrimSpace(value)) == len(value)
+	blank := len(strings.Trim(value, " "))
+	return blank == 0
 }
 
 func validateUrlFormat(url string) bool {
 	u, err := url1.Parse(url)
 	return err == nil && u.Scheme != "" && u.Host != ""
+}
+
+func validateSku(sku string) error {
+	subStr := sku[0:4]
+	subStrNum, err := strconv.Atoi(sku[4:])
+	if err == nil {
+		if subStr == domain.SubStrSku && subStrNum >= domain.MinSku && subStrNum <= domain.MaxSku {
+			return nil
+		}
+	}
+
+	return errors.ErrorFromMessage{Message: "SKU invalid"}
 }
 
 func validateBlankValuesProduct(product domain.Product) error {
@@ -54,4 +73,5 @@ func validateImagesUrls(product domain.Product) error {
 			return errors.ErrorFromMessage{Message: fmt.Sprintf("the url of other image in position %d is not valid", i)}
 		}
 	}
+	return nil
 }
