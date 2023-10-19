@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func createProduct(service productService) gin.HandlerFunc {
+func CreateProduct(service productService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body domain.Product
 		if err := c.ShouldBindJSON(&body); err != nil {
@@ -29,7 +29,7 @@ func createProduct(service productService) gin.HandlerFunc {
 	}
 }
 
-func searchProduct(service productService) gin.HandlerFunc {
+func SearchProduct(service productService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sku := c.Query("sku")
 		product, err := service.SearchProduct(sku)
@@ -47,7 +47,7 @@ func searchProduct(service productService) gin.HandlerFunc {
 	}
 }
 
-func getProducts(service productService) gin.HandlerFunc {
+func GetProducts(service productService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sku := c.Query("sku")
 		if sku == "" {

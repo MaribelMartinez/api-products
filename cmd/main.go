@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api-products-maribel-martinez/cmd/server"
 	"api-products-maribel-martinez/pkg/api/app/repositories/database"
 	"api-products-maribel-martinez/pkg/api/app/usecases/products"
 	"errors"
@@ -30,9 +31,9 @@ func run() error {
 	router := gin.Default()
 
 	productRouter := router.Group("/product")
-	productRouter.POST("/", createProduct(service))
-	productRouter.GET("/search", searchProduct(service))
-	productRouter.GET("/", getProducts(service))
+	productRouter.POST("/", server.CreateProduct(service))
+	productRouter.GET("/search", server.SearchProduct(service))
+	productRouter.GET("/", server.GetProducts(service))
 
 	if err := router.Run("localhost:8080"); err != nil {
 		return errors.New("error to run localhost:8080")
