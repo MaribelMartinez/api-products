@@ -1,4 +1,4 @@
-package server
+package main
 
 import (
 	"api-products-maribel-martinez/pkg/api/app/repositories/database"
@@ -23,10 +23,16 @@ func run() error {
 	if err != nil {
 		return errors.New("error open DB")
 	}
+
 	DBRepo := database.NewRepository(db)
 	service := products.NewService(DBRepo)
+
 	router := gin.Default()
-	router.POST("/product", createProduct(service))
+
+	productRouter := router.Group("/product")
+	productRouter.POST("/", createProduct(service))
+	productRouter.GET("/search", searchProduct(service))
+	productRouter.GET("/", getProducts(service))
 
 	if err := router.Run("localhost:8080"); err != nil {
 		return errors.New("error to run localhost:8080")
