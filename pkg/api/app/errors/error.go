@@ -3,9 +3,10 @@ package errors
 import "fmt"
 
 type ErrorFromMessage struct {
-	Message string
+	Message    string
+	StatusCode int
 }
 
 func (e ErrorFromMessage) Error() string {
-	return fmt.Sprintf("error: %s", e.Message)
+	return fmt.Sprintf("error: %s - statusCode %d", e.Message, e.StatusCode)
 }
